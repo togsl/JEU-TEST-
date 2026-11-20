@@ -1,33 +1,66 @@
-name: Tests et documentation
+name: CI - Windows Update Simulator
+
 on:
   push:
   pull_request:
   workflow_dispatch:
+
 permissions:
   contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    name: Tests, build et documentation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Récupération du dépôt
+        uses: actions/checkout@v7
         with:
-          node-version: '22'
-      - name: Vérification de la syntaxe
-        run: find src tests scripts -name '*.js' -exec node --check {} \; && node --check server.js
+          persist-credentials: false
+
+      - name: Installation de Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22.x'
+          package-manager-cache: false
+
+      - name: Vérification de la syntaxe JavaScript
+        run: |
+          set -euo pipefail
+          find src tests scripts -type f -name '*.js' -print0 | xargs -0 -r -n 1 node --check
+          node --check server.js
+
       - name: Tests unitaires
         run: npm test
-      - name: Construction de la page autonome
-        run: npm run build
-      - name: Génération de la documentation
-        run: npm run docs
-      - uses: actions/upload-artifact@v4
-        with:
-          name: documentation-jsdoc
-          path: docs/
-          if-no-files-found: error
-      - uses: actions/upload-artifact@v4
+
+      - name: Construction de la page HTML autonome
+        run: |
+          npm run build
+          test -s dist/windows-update.html
+
+      - name: Génération de la documentation JSDoc
+        run: |
+          npm run docs
+          test -s docs/index.html
+
+      - name: Publication de la page HTML
+        uses: actions/upload-artifact@v7
         with:
           name: page-web-autonome
           path: dist/windows-update.html
           if-no-files-found: error
+          retention-days: 14
+
+      - name: Publication de la documentation
+        uses: actions/upload-artifact@v7
+        with:
+          name: documentation-jsdoc
+          path: docs/
+          if-no-files-found: error
+          retention-days: 14
