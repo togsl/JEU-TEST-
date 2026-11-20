@@ -13,11 +13,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
-    name: Tests, build et documentation
+  syntax:
+    name: Vérification de la syntaxe
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-
     steps:
       - name: Récupération du dépôt
         uses: actions/checkout@v7
@@ -36,18 +35,45 @@ jobs:
           find src tests scripts -type f -name '*.js' -print0 | xargs -0 -r -n 1 node --check
           node --check server.js
 
+  tests:
+    name: Tests unitaires
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Récupération du dépôt
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Installation de Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22.x'
+          package-manager-cache: false
+
       - name: Tests unitaires
         run: npm test
+
+  build:
+    name: Construction HTML
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Récupération du dépôt
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Installation de Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22.x'
+          package-manager-cache: false
 
       - name: Construction de la page HTML autonome
         run: |
           npm run build
           test -s dist/windows-update.html
-
-      - name: Génération de la documentation JSDoc
-        run: |
-          npm run docs
-          test -s docs/index.html
 
       - name: Publication de la page HTML
         uses: actions/upload-artifact@v7
@@ -56,6 +82,27 @@ jobs:
           path: dist/windows-update.html
           if-no-files-found: error
           retention-days: 14
+
+  documentation:
+    name: Documentation JSDoc
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Récupération du dépôt
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Installation de Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22.x'
+          package-manager-cache: false
+
+      - name: Génération de la documentation JSDoc
+        run: |
+          npm run docs
+          test -s docs/index.html
 
       - name: Publication de la documentation
         uses: actions/upload-artifact@v7
