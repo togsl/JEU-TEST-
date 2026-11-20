@@ -1,0 +1,33 @@
+name: Tests et documentation
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Vérification de la syntaxe
+        run: find src tests scripts -name '*.js' -exec node --check {} \; && node --check server.js
+      - name: Tests unitaires
+        run: npm test
+      - name: Construction de la page autonome
+        run: npm run build
+      - name: Génération de la documentation
+        run: npm run docs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: documentation-jsdoc
+          path: docs/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: page-web-autonome
+          path: dist/windows-update.html
+          if-no-files-found: error

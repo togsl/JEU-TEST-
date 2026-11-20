@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0078d7">
+  <title>Windows Update — Simulation</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./src/main.js"></script>
+</head>
+<body>
+  <main class="update-screen">
+    <div class="activity" id="activity" aria-hidden="true">
+      <div class="spinner">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <svg viewBox="0 0 56 56" class="checkmark"><path d="M13 28 23 38 43 18"/></svg>
+    </div>
+    <h1 id="title">Installation des mises à jour</h1>
+    <p class="percent" id="percent" aria-hidden="true">0<span> % effectués</span></p>
+    <div class="visually-hidden" id="progress" role="progressbar" aria-label="Progression simulée" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+    <p class="warning">N’éteignez pas votre ordinateur.</p>
+    <div class="estimate" id="estimate">Calcul du temps restant…</div>
+    <p class="message" id="message" role="status" aria-live="polite">Préparation de votre tranquillité d’esprit…</p>
+  </main>
+  <footer class="bottom-bar">
+    <details class="options">
+      <summary>Simulation parodique · Options</summary>
+      <div class="options-panel">
+        <p class="package" id="package">Mise à jour 01 · KB000404</p>
+        <div class="stats"><span>Installations terminées : <strong id="completed">0</strong></span><span>Fausses joies : <strong id="baits">0</strong></span><span>Temps écoulé : <strong id="elapsed">00:00</strong></span></div>
+        <div class="controls">
+          <label for="speed">Vitesse</label>
+          <select id="speed"><option value="1">×1</option><option value="3">×3</option><option value="10">×10</option></select>
+          <button id="pause" type="button" aria-pressed="false">Pause</button>
+          <button id="reset" type="button">Recommencer</button>
+        </div>
+        <p class="notice">Aucune mise à jour réelle. Vous pouvez fermer cette page à tout moment.</p>
+      </div>
+    </details>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "windows-update-simulator",
+  "version": "2.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Une parodie interactive de Windows Update, sans mise à jour réelle.",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "docs": "npx --yes --package=jsdoc@4.0.4 -- jsdoc -c jsdoc.json",
+    "build": "node scripts/build.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
