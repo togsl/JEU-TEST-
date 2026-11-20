@@ -3,7 +3,7 @@ import { scenarios, interlude } from './scenarios.js';
 
 /** Gère le déroulement des installations, indépendamment de l'interface. */
 export class UpdateSimulator {
-  /** @param {() => number} [random=Math.random] Source aléatoire injectable pour les tests. */
+  /** @param {function(): number} [random=Math.random] Source aléatoire injectable pour les tests. */
   constructor(random = Math.random) {
     this.random = random;
     this.reset();
